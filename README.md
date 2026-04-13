@@ -89,27 +89,8 @@ This system might over-prioritize genre, ignoring songs from other genres that s
 
 Input (`user_prefs`) -> Process (`recommend_songs` loops through every song in `songs.csv` and scores each one) -> Output (songs sorted by score and trimmed to the top `k` recommendations).
 
-```mermaid
-flowchart LR
-    A[User Preferences<br/>favorite_genre, favorite_mood,<br/>target_energy, likes_acoustic]
-    B[data/songs.csv]
-    C[load_songs()<br/>read CSV rows into song dictionaries]
-    D[recommend_songs()]
-    E[Loop over each song]
-    F[Convert one row<br/>into a Song object]
-    G[score_song()<br/>+2 genre match<br/>+1 mood match<br/>+ energy similarity<br/>+ acoustic preference fit]
-    H[build_explanation()<br/>store song, score, explanation]
-    I[Collect scored songs]
-    J[Sort by score descending]
-    K[Take top k]
-    L[Ranked recommendations]
+<img width="8192" height="916" alt="Song Recommendation Scoring-2026-04-13-215243" src="https://github.com/user-attachments/assets/25590f26-bb4c-4dda-be6e-c07b25ebaedd" />
 
-    A --> D
-    B --> C --> D
-    D --> E --> F --> G --> H --> I
-    I --> E
-    I --> J --> K --> L
-```
 
 The diagram matches the code path for a single song: one CSV row is loaded, turned into a `Song`, scored against the user profile, packaged with its explanation, added to the scored list, and only then compared against the other songs during sorting.
 
