@@ -117,7 +117,8 @@ The diagram matches the code path for a single song: one CSV row is loaded, turn
 
 Running `python -m src.main` with the default `pop/happy` profile produces results that match the scoring recipe: `Sunrise City` ranks first because it matches both genre and mood while landing very close to the target energy, and `Gym Hero` ranks next because it shares the pop genre and also scores well on energy and low acousticness.
 
-![Terminal screenshot of recommendation output](assets/recommendations_terminal.png)
+![Terminal screenshot of recommendation output](assets/recommendations_terminal.png<img width="874" height="593" alt="Screenshot 2026-04-13 at 23 33 58" src="https://github.com/user-attachments/assets/1d055e01-8f04-4b80-85ef-c20e6265deb6" />
+)
 
 Some prompts to answer:
 
