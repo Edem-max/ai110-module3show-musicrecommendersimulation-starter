@@ -94,12 +94,42 @@ Input (`user_prefs`) -> Process (`recommend_songs` loops through every song in `
 
 The diagram matches the code path for a single song: one CSV row is loaded, turned into a `Song`, scored against the user profile, packaged with its explanation, added to the scored list, and only then compared against the other songs during sorting.
 
-### Terminal Output Example
+### Terminal Output Examples
 
-Running `python -m src.main` with the default `pop/happy` profile produces results that match the scoring recipe: `Sunrise City` ranks first because it matches both genre and mood while landing very close to the target energy, and `Gym Hero` ranks next because it shares the pop genre and also scores well on energy and low acousticness.
+Running `python -m src.main` now evaluates five named profiles in one pass: three standard taste profiles and two adversarial profiles meant to stress-test the scoring logic.
 
-![Terminal screenshot of recommendation output](assets/recommendations_terminal.png<img width="874" height="593" alt="Screenshot 2026-04-13 at 23 33 58" src="https://github.com/user-attachments/assets/1d055e01-8f04-4b80-85ef-c20e6265deb6" />
-)
+The standard profiles are:
+
+- `High-Energy Pop`
+- `Chill Lofi`
+- `Deep Intense Rock`
+
+The adversarial profiles are:
+
+- `Conflicted Sad High-Energy` to test a user with internally conflicting preferences
+- `Impossible Label Mismatch` to test what happens when the requested genre and mood are not present in the dataset
+
+These runs show that the recommender works well for clear profiles, but it also reveals a limitation: when labels are missing or contradictory, energy and acousticness can dominate enough to return songs that do not feel semantically close to the user's intent.
+
+#### High-Energy Pop
+
+![Terminal screenshot for the High-Energy Pop profile](assets/high_energy_pop_terminal.png)
+
+#### Chill Lofi
+
+![Terminal screenshot for the Chill Lofi profile](assets/chill_lofi_terminal.png)
+
+#### Deep Intense Rock
+
+![Terminal screenshot for the Deep Intense Rock profile](assets/deep_intense_rock_terminal.png)
+
+#### Conflicted Sad High-Energy
+
+![Terminal screenshot for the Conflicted Sad High-Energy profile](assets/conflicted_sad_high_energy_terminal.png)
+
+#### Impossible Label Mismatch
+
+![Terminal screenshot for the Impossible Label Mismatch profile](assets/impossible_label_mismatch_terminal.png)
 
 Some prompts to answer:
 
@@ -150,11 +180,15 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+I tested five user profiles:
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+- `High-Energy Pop` returned `Sunrise City`, `Gym Hero`, and `Rooftop Lights` near the top, which makes sense because the profile aligns closely with strong pop and happy-label matches.
+- `Chill Lofi` returned `Library Rain`, `Midnight Coding`, and `Focus Flow` as the strongest matches, showing that the recommender performs well when the catalog contains direct genre and mood matches.
+- `Deep Intense Rock` correctly ranked `Storm Runner` first, but then recommended non-rock songs like `Gym Hero` and `Afterglow District` because energy and low acousticness can outweigh genre once the exact rock options run out.
+- `Conflicted Sad High-Energy` exposed an edge case: the system mostly recommended upbeat pop tracks because there is no true `sad` mood feature in the scoring logic beyond exact label matching, so strong genre and energy similarity took over.
+- `Impossible Label Mismatch` exposed another edge case: when no songs match the requested genre or mood, the recommender still returns a top 5 based only on energy proximity and acousticness, which can produce results that look mathematically reasonable but semantically odd.
+
+These experiments helped me see that the model is interpretable and predictable, but also brittle when user intent cannot be represented cleanly by the available labels.
 
 ---
 
